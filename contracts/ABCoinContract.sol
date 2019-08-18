@@ -1,6 +1,9 @@
 pragma solidity ^0.5.8;
 import "./SafeMath.sol";
-contract ABCoinContract is ERC20Interface, Owned {
+import "./CoinInterface.sol";
+import "./Owned.sol";
+
+contract ABCoinContract is CoinInterface, Owned {
     using SafeMath for uint;
 
     string public symbol;
@@ -95,21 +98,6 @@ contract ABCoinContract is ERC20Interface, Owned {
         return allowed[tokenOwner][spender];
     }
 
-
-    // ------------------------------------------------------------------------
-    // Token owner can approve for `spender` to transferFrom(...) `tokens`
-    // from the token owner's account. The `spender` contract function
-    // `receiveApproval(...)` is then executed
-    // ------------------------------------------------------------------------
-    function approveAndCall(address spender, uint tokens, bytes memory data) public returns (bool success) {
-        allowed[msg.sender][spender] = tokens;
-        emit Approval(msg.sender, spender, tokens);
-        ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, address(this), data);
-        return true;
-    }
-
-
-    // ------------------------------------------------------------------------
     // Don't accept ETH
     // ------------------------------------------------------------------------
     function () external payable {
@@ -121,6 +109,6 @@ contract ABCoinContract is ERC20Interface, Owned {
     // Owner can transfer out any accidentally sent ERC20 tokens
     // ------------------------------------------------------------------------
     function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
-        return ERC20Interface(tokenAddress).transfer(owner, tokens);
+        return CoinInterface(tokenAddress).transfer(owner, tokens);
     }
 }
