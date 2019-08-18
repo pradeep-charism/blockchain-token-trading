@@ -10,6 +10,7 @@ contract ABCoinContract is CoinInterface, Owned {
     string public  name;
     uint8 public decimals;
     uint _totalSupply;
+    uint _unitsToIssue;
 
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
@@ -21,16 +22,16 @@ contract ABCoinContract is CoinInterface, Owned {
     constructor() public {
         symbol = "ABT";
         name = "AB Coin tokens";
-        decimals = 18;
+        decimals = 3;
+        _unitsToIssue = 1000 * 10**uint(decimals);
         _totalSupply = 0;
         balances[owner] = _totalSupply;
         emit Transfer(address(0), owner, _totalSupply);
     }
 
     function issueTokens() public returns (bool success) {
-        // _totalSupply = 1000000 * 10**uint(decimals);
-        _totalSupply = _totalSupply.add(1000);
-        balances[owner] = balances[owner].add(1000);
+        _totalSupply = _totalSupply.add(_unitsToIssue);
+        balances[owner] = balances[owner].add(_unitsToIssue);
         emit Transfer(address(0), owner, _totalSupply);
     }
 
