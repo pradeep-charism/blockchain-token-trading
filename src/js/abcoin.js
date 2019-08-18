@@ -3,24 +3,6 @@ App = {
   contracts: {},
 
   init: async function () {
-    $.getJSON('../shop-items.json', function (data) {
-      var shopsRow = $('#shopsRow');
-      var shopTemplate = $('#shopTemplate');
-
-      for (i = 0; i < data.length; i++) {
-        shopTemplate.find('.panel-title').text(data[i].name);
-        shopTemplate.find('img').attr('src', data[i].picture);
-        shopTemplate.find('.shop-desc').text(data[i].desc);
-        shopTemplate.find('.shop-cost').text(data[i].cost);
-        shopTemplate.find('.shop-location').text(data[i].location);
-        shopTemplate.find('.btn-adopt').attr('data-id', data[i].id);
-        shopTemplate.find('.btn-release').attr('data-id', data[i].id).attr('disabled', true);
-
-
-        shopsRow.append(shopTemplate.html());
-      }
-    });
-
     return await App.initWeb3();
   },
 
@@ -47,102 +29,81 @@ App = {
 
   initContract: function () {
 
-    $.getJSON('Adoption.json', function (data) {
-      var AdoptionArtifact = data;
-      App.contracts.Adoption = TruffleContract(AdoptionArtifact);
-      App.contracts.Adoption.setProvider(App.web3Provider);
-      return App.markAdopted();
+    $.getJSON('ABCoinContract.json', function (data) {
+      var ABCoinContractArtifact = data;
+      App.contracts.ABCoinContract = TruffleContract(ABCoinContractArtifact);
+      App.contracts.ABCoinContract.setProvider(App.web3Provider);
+      return App.loadOnStartup();
     });
 
     return App.bindEvents();
   },
 
   bindEvents: function () {
-    $(document).on('click', '.btn-adopt', App.handleAdopt);
-    $(document).on('click', '.btn-release', App.handleRelease);
+    $(document).on('click', '.btn-show-balance', App.showTotalSupply);
+    $(document).on('click', '.btn-issue-token', App.issueTokens);
   },
 
-  markAdopted: function (adopters, account) {
-
-    var adoptionInstance;
-    App.contracts.Adoption.deployed().then(function (instance) {
-      adoptionInstance = instance;
-      return adoptionInstance.getAdopters.call();
-    }).then(function (adopters) {
-      for (i = 0; i < adopters.length; i++) {
-        if (adopters[i] !== '0x0000000000000000000000000000000000000000') {
-          $('.panel-shop').eq(i).find('.btn-adopt').text('Buy').attr('disabled', true);
-          $('.panel-shop').eq(i).find('.btn-release').text('Sell').attr('disabled', false);
-        }
-      }
-    }).catch(function (err) {
-      console.log(err.message);
-    });
-  },
-
-  handleAdopt: function (event) {
-    event.preventDefault();
-
-    var shopId = parseInt($(event.target).data('id'));
-
-
-    var adoptionInstance;
+  loadOnStartup: function (event) {
+    var abcoinInstance;
     web3.eth.getAccounts(function (error, accounts) {
       if (error) {
         console.log(error);
       }
       var account = accounts[0];
-      App.contracts.Adoption.deployed().then(function (instance) {
-        adoptionInstance = instance;
-        return adoptionInstance.adopt(shopId, { from: account, data: shopId });
+      App.contracts.ABCoinContract.deployed().then(function (instance) {
+        abcoinInstance = instance;
+        return abcoinInstance.totalSupply({ from: account });
       }).then(function (result) {
-        return App.markAdopted();
+        $('#adminTemplate').find('.total-supply').text(`${result}`);
+        console.log("Total Supply", `${result}`);
+        return true;
+      }).catch(function (err) {
+        console.log(err.message);
+      });
+    });
+
+    web3.eth.getAccounts(function (error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+      var account = accounts[0];
+      App.contracts.ABCoinContract.deployed().then(function (instance) {
+        abcoinInstance = instance;
+        return abcoinInstance.balanceOf('0xDEC548BA4f54Cb5CfA6a09077b55DaDa9762d922', { from: account });
+      }).then(function (result) {
+        $('#adminTemplate').find('.balance-at').text(`${result}`);
+        console.log("Balance at", `${result}`);
+        return true;
       }).catch(function (err) {
         console.log(err.message);
       });
     });
   },
 
-  markReleased: function (adopters, account) {
+  issueTokens: function (event) {
+  event.preventDefault();
 
-    var adoptionInstance;
-    App.contracts.Adoption.deployed().then(function (instance) {
-      adoptionInstance = instance;
-      return adoptionInstance.getAdopters.call();
-    }).then(function (adopters) {
-      for (i = 0; i < adopters.length; i++) {
-        if (adopters[i] === '0x0000000000000000000000000000000000000000') {
-          $('.panel-shop').eq(i).find('.btn-adopt').text('Buy').attr('disabled', false);
-          $('.panel-shop').eq(i).find('.btn-release').text('Sell').attr('disabled', true);
+      var abcoinInstance;
+      web3.eth.getAccounts(function (error, accounts) {
+        if (error) {
+          console.log(error);
         }
-      }
-    }).catch(function (err) {
-      console.log(err.message);
-    });
-  },
-
-  handleRelease: function (event) {
-    event.preventDefault();
-
-    var shopId = parseInt($(event.target).data('id'));
-
-
-    var adoptionInstance;
-    web3.eth.getAccounts(function (error, accounts) {
-      if (error) {
-        console.log(error);
-      }
-      var account = accounts[0];
-      App.contracts.Adoption.deployed().then(function (instance) {
-        adoptionInstance = instance;
-        return adoptionInstance.release(shopId, { from: account });
-      }).then(function (result) {
-        return App.markReleased();
-      }).catch(function (err) {
-        console.log(err.message);
+        var account = accounts[0];
+        App.contracts.ABCoinContract.deployed().then(function (instance) {
+          abcoinInstance = instance;
+          return abcoinInstance.issueTokens({ from: account });
+        }).then(function (result) {
+          console.log("issueTokens", `${result}`);
+          return App.loadOnStartup();
+        }).catch(function (err) {
+          console.log(err.message);
+        });
       });
-    });
-  }
+    }
+
+
+
 
 };
 

@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Shop Thereum</title>
+    <title>AB Coin Market</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
@@ -26,32 +26,29 @@
     </div>
 
     <div id="shopsRow" class="row">
-        <!-- PRODUCTS LOAD HERE -->
-    </div>
-</div>
+        <div id="adminTemplate">
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="panel panel-default panel-shop">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Admin View</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="btngroup" class="btn" data-toggle="buttons-radio">
+                            <button type="button" class="btn btn-primary btn-issue-token" data-id="0">Issue Coins</button>
+                            <button type="button" class="btn btn-primary btn-pause" data-id="0">Pause</button>
+                            <button type="button" class="btn btn-primary btn-resume" data-id="0">Resume</button>
+                        </div>
+                        <strong>Total Supply</strong>: <span class="total-supply">0</span><br/>
+                        <strong>Balance at</strong>: <span class="balance-at">0</span><br/>
+                        <button type="button" class="btn btn-default btn-show-price" data-id="0">$</button>
 
-<div id="shopTemplate" style="display: none;">
-    <div class="col-sm-6 col-md-4 col-lg-3">
-        <div class="panel panel-default panel-shop">
-            <div class="panel-heading">
-                <h3 class="panel-title">Scrappy</h3>
-            </div>
-            <div class="panel-body">
-                <img alt="140x140" data-src="holder.js/140x140" class="img-rounded img-center" style="width: 100%;"
-                     src="https://animalso.com/wp-content/uploads/2017/01/Golden-Retriever_6.jpg"
-                     data-holder-rendered="true">
-                <br/><br/>
-                <strong>Desc</strong>: <span class="shop-desc">Golden Retriever</span><br/>
-                <strong>Cost</strong>: <span class="shop-cost">3</span><br/>
-                <strong>Seller</strong>: <span class="shop-location">Warren, MI</span><br/><br/>
-                <div id="btngroup" class="btn" data-toggle="buttons-radio">
-                    <button type="button" class="btn btn-primary btn-adopt" data-id="0">Buy</button>
-                    <button type="button" class="btn btn-primary btn-release" data-id="0">Sell</button>
+                    </div>
                 </div>
-                <button type="button" class="btn btn-default btn-show-price" data-id="0">$</button>
-
             </div>
         </div>
+
+        </p>
+        <br/>
     </div>
 </div>
 
@@ -61,6 +58,6 @@
 <script src="js/bootstrap.min.js"></script>
 <script src="js/web3.min.js"></script>
 <script src="js/truffle-contract.js"></script>
-<script src="js/shopthereum.js"></script>
+<script src="js/abcoin.js"></script>
 </body>
 </html>

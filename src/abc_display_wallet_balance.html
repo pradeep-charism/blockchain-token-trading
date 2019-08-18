@@ -44,25 +44,33 @@
 </head>
 
 <body>
-<h2>Kays INFURA Ethereum Account Explorer</h2>
-<form method=GET action="display_wallet_balance.html">
-    Enter an account:
-    <input type=text size=50 name=account>
-    <button type=submit>Submit</button>
-    <p id="account"></p>
-    <p id="balance"></p>
-    <p id="gasPrice"></p>
-    <p id="blockNum"></p>
-</form>
-<p>
-<div id="account"></div>
-<div id="balance"></div>
-<div id="gasPrice"></div>
-<script>
+    <h2>Kays INFURA Ethereum Account Explorer</h2>
+    <form method=GET action="abc_display_wallet_balance.html">
+        Enter an account:
+        <input type=text size=50 name=account>
+        <button type=submit>Submit</button>
+        <p id="account"></p>
+        <p id="balance"></p>
+        <p id="gasPrice"></p>
+        <p id="blockNum"></p>
+    </form>
+    <p>
+        <div id="account"></div>
+        <div id="balance"></div>
+        <div id="gasPrice"></div>
+        <script>
             printAccountBalance();
 
         </script>
-</p>
+    </p>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/web3.min.js"></script>
+    <script src="js/truffle-contract.js"></script>
+    <script src="js/shopthereum.js"></script>
+
 </body>
 
 </html>

@@ -19,14 +19,20 @@ contract ABCoinContract is CoinInterface, Owned {
     // Constructor
     // ------------------------------------------------------------------------
     constructor() public {
-        symbol = "FIXED";
-        name = "Example Fixed Supply Token";
+        symbol = "ABT";
+        name = "AB Coin tokens";
         decimals = 18;
-        _totalSupply = 1000000 * 10**uint(decimals);
+        _totalSupply = 0;
         balances[owner] = _totalSupply;
         emit Transfer(address(0), owner, _totalSupply);
     }
 
+    function issueTokens() public returns (bool success) {
+        // _totalSupply = 1000000 * 10**uint(decimals);
+        _totalSupply = _totalSupply.add(1000);
+        balances[owner] = balances[owner].add(1000);
+        emit Transfer(address(0), owner, _totalSupply);
+    }
 
     // ------------------------------------------------------------------------
     // Total supply
