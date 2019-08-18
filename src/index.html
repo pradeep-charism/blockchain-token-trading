@@ -28,7 +28,7 @@
 
     <div id="shopsRow" class="row">
         <div id="adminTemplate">
-            <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="col-sm-6 col-md-10 col-lg-8">
                 <div class="panel panel-default panel-shop">
                     <div class="panel-heading">
                         <h3 class="panel-title">Admin View</h3>
@@ -38,10 +38,15 @@
                             <button type="button" class="btn btn-primary btn-issue-token" data-id="0">Issue Coins</button>
                             <button type="button" class="btn btn-primary btn-pause" data-id="0">Pause</button>
                             <button type="button" class="btn btn-primary btn-resume" data-id="0">Resume</button>
+                            <br/>
                         </div>
-                        <strong>Total Supply</strong>: <span class="total-supply">0</span><br/>
-                        <strong>Balance at</strong>: <span class="balance-at">0</span><br/>
-                        <button type="button" class="btn btn-default btn-show-price" data-id="0">$</button>
+                        <div id="content">
+                            <strong>Total Supply</strong>: <span class="total-supply">0</span><br/>
+                            <strong>Balance at</strong>: <span class="balance-at">0</span><br/>
+                            <strong>Transfer to</strong>: <input type=text size=50 name=account>
+                            <button type="button" class="btn btn-default btn-transfer">$</button>
+
+                        </div>
 
                     </div>
                 </div>
