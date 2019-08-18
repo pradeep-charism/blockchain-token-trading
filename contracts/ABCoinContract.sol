@@ -1,7 +1,6 @@
 pragma solidity ^0.5.8;
-import './ABCoin.sol';
 import "./SafeMath.sol";
-contract FixedSupplyToken is ERC20Interface, Owned {
+contract ABCoinContract is ERC20Interface, Owned {
     using SafeMath for uint;
 
     string public symbol;
