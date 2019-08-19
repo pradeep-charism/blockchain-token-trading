@@ -17,59 +17,65 @@ contract ABCoinContract is CoinInterface, Owned {
         address holder;
         uint units;
     }
-    mapping(address => Token) tokens;
+    mapping(address => Token) tokensLedger;
+    address[] tokenHolders;
 
-    mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
 
-
-    // ------------------------------------------------------------------------
-    // Constructor
-    // ------------------------------------------------------------------------
     constructor() public {
         symbol = "ABT";
         name = "AB Coin tokens";
         decimals = 3;
         _unitsToIssue = 1000 * 10**uint(decimals);
         _totalSupply = 0;
-        balances[owner] = _totalSupply;
 
         Token memory newToken;
-        newToken.units = 0;
+        newToken.units = _totalSupply;
         newToken.holder = owner;
-        tokens[owner] = newToken;
+        tokensLedger[owner] = newToken;
+        tokenHolders.push(owner);
         emit Transfer(address(0), owner, _totalSupply);
     }
 
     function issueTokens() public returns (bool success) {
         _totalSupply = _totalSupply.add(_unitsToIssue);
-        balances[owner] = balances[owner].add(_unitsToIssue);
 
-        Token memory newToken = tokens[owner];
+        Token memory newToken = tokensLedger[owner];
         newToken.units = newToken.units.add(_unitsToIssue);
         newToken.holder = owner;
-        tokens[owner] = newToken;
-
+        tokensLedger[owner] = newToken;
+        if(tokensLedger[owner].holder == 0x0000000000000000000000000000000000000000){
+            tokenHolders.push(owner);
+        }
         emit Transfer(address(0), owner, _totalSupply);
     }
 
-    function getTokents() public view returns (address, uint ){
-        return (owner, tokens[owner].units);
+    function getTokenHoldersLength() public view returns (uint){
+        return tokenHolders.length;
     }
 
-    // ------------------------------------------------------------------------
-    // Total supply
-    // ------------------------------------------------------------------------
+    function getNumberOfTokenHolders(address who) public view returns (address){
+        // bool x = tokensLedger[who]==null? true: false;
+        return tokensLedger[who].holder;
+    }
+
+    function getAllTokenHolders() public view returns (address[] memory, uint[] memory){
+        address[] memory holders = new address[](tokenHolders.length);
+        uint[]    memory units = new uint[](tokenHolders.length);
+        for (uint i = 0; i < tokenHolders.length; i++) {
+            Token storage token = tokensLedger[tokenHolders[i]];
+            holders[i] = token.holder;
+            units[i] = token.units;
+        }
+        return (holders, units);
+    }
+
     function totalSupply() public view returns (uint) {
-        return _totalSupply.sub(balances[address(0)]);
+        return _totalSupply.sub(tokensLedger[address(0)].units);
     }
 
-
-    // ------------------------------------------------------------------------
-    // Get the token balance for account `tokenOwner`
-    // ------------------------------------------------------------------------
     function balanceOf(address tokenOwner) public view returns (uint balance) {
-        return tokens[owner].units;
+        return tokensLedger[tokenOwner].units;
     }
 
 
@@ -79,8 +85,21 @@ contract ABCoinContract is CoinInterface, Owned {
     // - 0 value transfers are allowed
     // ------------------------------------------------------------------------
     function transfer(address to, uint tokens) public returns (bool success) {
-        balances[msg.sender] = balances[msg.sender].sub(tokens);
-        balances[to] = balances[to].add(tokens);
+        //        balances[msg.sender] = balances[msg.sender].sub(tokens);
+        Token memory newToken = tokensLedger[msg.sender];
+        newToken.units = newToken.units.sub(tokens);
+        tokensLedger[msg.sender] = newToken;
+
+        //        balances[to] = balances[to].add(tokens);
+        if(tokensLedger[to].holder == 0x0000000000000000000000000000000000000000){
+            tokenHolders.push(to);
+        }
+        Token memory  token = tokensLedger[to];
+        token.holder = to;
+        token.units = token.units.add(tokens);
+        tokensLedger[to] = token;
+
+
         emit Transfer(msg.sender, to, tokens);
         return true;
     }
@@ -111,10 +130,10 @@ contract ABCoinContract is CoinInterface, Owned {
     // - 0 value transfers are allowed
     // ------------------------------------------------------------------------
     function transferFrom(address from, address to, uint tokens) public returns (bool success) {
-        balances[from] = balances[from].sub(tokens);
-        allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
-        balances[to] = balances[to].add(tokens);
-        emit Transfer(from, to, tokens);
+        //         balances[from] = balances[from].sub(tokens);
+        //         allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
+        //         balances[to] = balances[to].add(tokens);
+        //         emit Transfer(from, to, tokens);
         return true;
     }
 
