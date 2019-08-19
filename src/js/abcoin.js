@@ -7,23 +7,8 @@ App = {
   },
 
   initWeb3: async function () {
-
-    if (window.ethereum) {
-      App.web3Provider = window.ethereum;
-      try {
-        await window.ethereum.enable();
-      } catch (error) {
-        console.error("User denied account access")
-      }
-    }
-    else if (window.web3) {
-      App.web3Provider = window.web3.currentProvider;
-    }
-    else {
-      App.web3Provider = new Web3.providers.HttpProvider('http://localhost:7545');
-    }
+    App.web3Provider = new Web3.providers.HttpProvider('http://localhost:7545');
     web3 = new Web3(App.web3Provider);
-
     return App.initContract();
   },
 
@@ -71,7 +56,7 @@ App = {
       var account = accounts[0];
       App.contracts.ABCoinContract.deployed().then(function (instance) {
         abcoinInstance = instance;
-        return abcoinInstance.balanceOf('0xDEC548BA4f54Cb5CfA6a09077b55DaDa9762d922', { from: account });
+        return abcoinInstance.balanceOf(account, { from: account });
       }).then(function (result) {
         $('#adminTemplate').find('.balance-at').text(`${result}`);
         console.log("Balance at", `${result}`);
@@ -117,7 +102,7 @@ App = {
         console.log("To account: ", toAccount);
         App.contracts.ABCoinContract.deployed().then(function (instance) {
           abcoinInstance = instance;
-          return abcoinInstance.transfer(toAccount, 1000, { from: fromAccount });
+          return abcoinInstance.transfer(toAccount, 100000, { from: fromAccount });
         }).then(function (result) {
           console.log("issueTokens", `${result}`);
           return App.loadOnStartup();
@@ -125,11 +110,28 @@ App = {
           console.log(err.message);
         });
       });
+    },
+
+
+
+hookupMetamask: async function () {
+    if (window.ethereum) {
+      App.web3Provider = window.ethereum;
+      try {
+        await window.ethereum.enable();
+      } catch (error) {
+        console.error("User denied account access")
+      }
     }
-
-
-
-
+    else if (window.web3) {
+      App.web3Provider = window.web3.currentProvider;
+    }
+    else {
+      App.web3Provider = new Web3.providers.HttpProvider('http://localhost:7545');
+    }
+    web3 = new Web3(App.web3Provider);
+    return App.initContract();
+  }
 };
 
 $(function () {

@@ -12,6 +12,13 @@ contract ABCoinContract is CoinInterface, Owned {
     uint _totalSupply;
     uint _unitsToIssue;
 
+
+    struct Token {
+        address holder;
+        uint units;
+    }
+    mapping(address => Token) tokens;
+
     mapping(address => uint) balances;
     mapping(address => mapping(address => uint)) allowed;
 
@@ -26,13 +33,28 @@ contract ABCoinContract is CoinInterface, Owned {
         _unitsToIssue = 1000 * 10**uint(decimals);
         _totalSupply = 0;
         balances[owner] = _totalSupply;
+
+        Token memory newToken;
+        newToken.units = 0;
+        newToken.holder = owner;
+        tokens[owner] = newToken;
         emit Transfer(address(0), owner, _totalSupply);
     }
 
     function issueTokens() public returns (bool success) {
         _totalSupply = _totalSupply.add(_unitsToIssue);
         balances[owner] = balances[owner].add(_unitsToIssue);
+
+        Token memory newToken = tokens[owner];
+        newToken.units = newToken.units.add(_unitsToIssue);
+        newToken.holder = owner;
+        tokens[owner] = newToken;
+
         emit Transfer(address(0), owner, _totalSupply);
+    }
+
+    function getTokents() public view returns (address, uint ){
+        return (owner, tokens[owner].units);
     }
 
     // ------------------------------------------------------------------------
@@ -47,7 +69,7 @@ contract ABCoinContract is CoinInterface, Owned {
     // Get the token balance for account `tokenOwner`
     // ------------------------------------------------------------------------
     function balanceOf(address tokenOwner) public view returns (uint balance) {
-        return balances[tokenOwner];
+        return tokens[owner].units;
     }
 
 
