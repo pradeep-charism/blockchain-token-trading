@@ -102,7 +102,7 @@ App = {
         console.log("To account: ", toAccount);
         App.contracts.ABCoinContract.deployed().then(function (instance) {
           abcoinInstance = instance;
-          return abcoinInstance.transfer(toAccount, 100000, { from: fromAccount });
+          return abcoinInstance.transfer(toAccount, 100000, { from: fromAccount, gas:3000000 });
         }).then(function (result) {
           console.log("issueTokens", `${result}`);
           return App.loadOnStartup();

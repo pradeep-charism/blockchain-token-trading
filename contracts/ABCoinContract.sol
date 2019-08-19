@@ -85,12 +85,10 @@ contract ABCoinContract is CoinInterface, Owned {
     // - 0 value transfers are allowed
     // ------------------------------------------------------------------------
     function transfer(address to, uint tokens) public returns (bool success) {
-        //        balances[msg.sender] = balances[msg.sender].sub(tokens);
         Token memory newToken = tokensLedger[msg.sender];
         newToken.units = newToken.units.sub(tokens);
         tokensLedger[msg.sender] = newToken;
 
-        //        balances[to] = balances[to].add(tokens);
         if(tokensLedger[to].holder == 0x0000000000000000000000000000000000000000){
             tokenHolders.push(to);
         }
@@ -98,7 +96,6 @@ contract ABCoinContract is CoinInterface, Owned {
         token.holder = to;
         token.units = token.units.add(tokens);
         tokensLedger[to] = token;
-
 
         emit Transfer(msg.sender, to, tokens);
         return true;
