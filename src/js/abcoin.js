@@ -32,12 +32,14 @@ App = {
 
   loadOnStartup: function (event) {
     var abcoinInstance;
+    const abcCoinDeployed = App.contracts.ABCoinContract.deployed();
+
     web3.eth.getAccounts(function (error, accounts) {
       if (error) {
         console.log(error);
       }
       var account = accounts[0];
-      App.contracts.ABCoinContract.deployed().then(function (instance) {
+      abcCoinDeployed.then(function (instance) {
         abcoinInstance = instance;
         return abcoinInstance.totalSupply({ from: account });
       }).then(function (result) {
@@ -54,7 +56,7 @@ App = {
         console.log(error);
       }
       var account = accounts[0];
-      App.contracts.ABCoinContract.deployed().then(function (instance) {
+      abcCoinDeployed.then(function (instance) {
         abcoinInstance = instance;
         return abcoinInstance.balanceOf(account, { from: account });
       }).then(function (result) {
@@ -65,6 +67,43 @@ App = {
         console.log(err.message);
       });
     });
+
+    web3.eth.getAccounts(function (error, accounts) {
+          if (error) {
+            console.log(error);
+          }
+        var account = accounts[0];
+          abcCoinDeployed.then(function (instance) {
+            abcoinInstance = instance;
+            const allTokens = abcoinInstance.getAllTokenHolders({ from: account });
+            console.log("All tokens:", allTokens);
+            return allTokens;
+          }).then(function (result) {
+//            $('#adminTemplate').find('.balance-at').text(`${result}`);
+            const res = `${result}`;
+            const allTokensLength = res[1].length;
+            console.log("All tokens length:", allTokensLength);
+            console.log("getAllTokenHolders:", res);
+
+            const FIELD_ADDR  = 0
+            const FIELD_FUNDS = 1
+
+            let peopleStructs = []
+            for (let i = 0; i < allTokensLength; i++) {
+                const Token = {
+                    holder:  res[FIELD_ADDR][i],
+                    units: res[FIELD_FUNDS][i],
+                }
+                peopleStructs.push(Token)
+            }
+
+            console.log('peopleStructs =', peopleStructs)
+
+            return true;
+          }).catch(function (err) {
+            console.log(err.message);
+          });
+        });
   },
 
   issueTokens: function (event) {
